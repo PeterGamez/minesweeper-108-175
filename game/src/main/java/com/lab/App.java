@@ -3,23 +3,18 @@ package com.lab;
 import java.util.Scanner;
 
 public class App {
-    static Minesweeper initMineField() {
-        Minesweeper game = new Minesweeper(9, 9);
-        game.setMineCell(0, 1);
-        game.setMineCell(1, 5);
-        game.setMineCell(1, 8);
-        game.setMineCell(2, 4);
-        game.setMineCell(3, 6);
-        game.setMineCell(4, 2);
-        game.setMineCell(5, 4);
-        game.setMineCell(6, 2);
-        game.setMineCell(7, 2);
-        game.setMineCell(8, 6);
+    static Minesweeper initMineField(int size) {
+        Minesweeper game = new Minesweeper(size, size);
+
+        game.setRandomMine(size);
+
         return game;
     }
 
     static Minesweeper initMineFieldFromFile(String minefieldFile) {
-        return new Minesweeper(minefieldFile);
+        Minesweeper game = new Minesweeper(minefieldFile);
+
+        return game;
     }
 
     public static void main(String[] args) {
@@ -34,12 +29,24 @@ public class App {
             System.out.println("2. Load mine field from file");
             System.out.println("3. Exit");
             System.out.print("Enter your choice: ");
-            String choice = scanner.nextLine();
+            String choice = scanner.nextLine().trim();
 
             Minesweeper game = null;
 
             if (choice.equals("1")) {
-                game = initMineField();
+                System.out.print("Enter mine field size: ");
+                int size = 0;
+                try {
+                    size = Integer.parseInt(scanner.nextLine().trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input\n");
+                    continue;
+                }
+                if (size < 5 || size > 10) {
+                    System.out.println("Enter size between 5 and 10\n");
+                    continue;
+                }
+                game = initMineField(size);
             } else if (choice.equals("2")) {
                 game = initMineFieldFromFile("minefield/minefield01.txt");
             } else if (choice.equals("3")) {

@@ -4,16 +4,12 @@ import java.util.Scanner;
 import java.io.InputStream;
 
 public class Minesweeper {
-    static char SAFE_CELL = '.';
-    static char MINE_CELL = 'X';
-    static char REVEALED_CELL = 'O';
-    static int IS_SAFE = 0;
-    static int IS_MINE = 1;
-    static int IS_REVEALED = 2;
-    static int isStarted = 0;
-    int fieldX, fieldY;
-    int[][] cells;
-    String fieldFileName;
+    private char SAFE_CELL = '.', MINE_CELL = 'X', REVEALED_CELL = 'O';
+    private int IS_SAFE = 0, IS_MINE = 1, IS_REVEALED = 2;
+    private int isStarted = 0;
+    private int fieldX, fieldY;
+    private int[][] cells;
+    private String fieldFileName;
 
     public Minesweeper(String fieldFile) {
         this.fieldFileName = fieldFile;
@@ -52,6 +48,30 @@ public class Minesweeper {
         cells[x][y] = IS_MINE;
     }
 
+    void setRandomMine(int size) {
+        int count = 0, round = 0;
+        while (true) {
+            round++;
+            if (round > 100) {
+                throw new RuntimeException("Cannot set mine");
+            }
+
+            int x = (int) (Math.random() * size);
+            int y = (int) (Math.random() * size);
+
+            if (cells[x][y] == IS_MINE) {
+                continue;
+            }
+
+            setMineCell(x, y);
+
+            count++;
+            if (count >= size) {
+                break;
+            }
+        }
+    }
+
     void initFromFile(String mineFieldFile) {
         InputStream is = getClass().getClassLoader().getResourceAsStream(mineFieldFile);
         if (is == null) {
@@ -63,12 +83,12 @@ public class Minesweeper {
         // named, `is`
 
         Scanner scanner = new Scanner(is);
-        fieldX = Integer.parseInt(scanner.nextLine());
-        fieldY = Integer.parseInt(scanner.nextLine());
+        fieldX = Integer.parseInt(scanner.nextLine().trim());
+        fieldY = Integer.parseInt(scanner.nextLine().trim());
 
         cells = new int[fieldX][fieldY];
         for (int i = 0; i < fieldX; i++) {
-            String line = scanner.nextLine();
+            String line = scanner.nextLine().trim();
             for (int j = 0; j < fieldY; j++) {
                 char cell = line.charAt(j);
                 if (cell == SAFE_CELL) {
@@ -86,9 +106,16 @@ public class Minesweeper {
         isStarted = 1;
         while (true) {
             System.out.print("Enter cell to reveal (x y): ");
-            String[] args = scanner.nextLine().split(" ");
+            String line = scanner.nextLine().trim();
+
+            String[] args = line.split(" ");
             int x = Integer.parseInt(args[0]) - 1;
             int y = Integer.parseInt(args[1]) - 1;
+
+            if (x < 0 || x >= fieldX || y < 0 || y >= fieldY) {
+                System.out.println("Invalid cell");
+                continue;
+            }
 
             if (cells[x][y] == IS_MINE) {
                 System.out.println("Game over!");
