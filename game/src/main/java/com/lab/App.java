@@ -25,7 +25,7 @@ public class App {
 
         while (true) {
             System.out.println("Select mine field template:");
-            System.out.println("1. Load default mine field");
+            System.out.println("1. Custom mine field");
             System.out.println("2. Load mine field from file");
             System.out.println("3. Exit");
             System.out.print("Enter your choice: ");
